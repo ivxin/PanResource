@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">PanShareCodeTool</string>
+    <string name="default_template">链接：https://pan.baidu.com/s/%s 提取码：%s  复制这段内 >容后打开百度网盘手机App，操作更方便哦</string>
+    <string name="default_app_package_name">com.baidu.netdisk</string>
+    <string name="code_rex">[a-zA-Z0-9+-_]{23}-[a-zA-Z0-9]{4}</string>
+    <string name="tip">使用方法有三种：
+        \n1.公众号文章右上角——>在浏览器打开——>选择PanShareCodeTool
+        \n2.公众号文章右上角——>复制链接——>打开PanShareCodeTool
+        \n3.文章内复制含有分享码的文本——>打开PanShareCodeTool
+        \n  正常情况就可以得到粗体的分享码了，最下面的方块可以打开对应的app（右下角也可以更换app），也可以选择自动打开
+        \n  有疑问联系iroha.acg@iroha.com.cn
+    </string>
+</resources>
