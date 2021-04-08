@@ -10,4 +10,5 @@
         \n  正常情况就可以得到粗体的分享码了，最下面的方块可以打开对应的app（右下角也可以更换app），也可以选择自动打开
         \n  有疑问联系iroha.acg@iroha.com.cn
     </string>
+    <string name="nothing_found">nothing found</string>
 </resources>

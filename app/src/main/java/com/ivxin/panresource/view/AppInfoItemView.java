@@ -1,31 +1,25 @@
 package com.ivxin.panresource.view;
 
 import android.content.Context;
-import android.view.View;
+import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.ivxin.panresource.AppInfo;
-import com.ivxin.panresource.R;
+import com.ivxin.panresource.databinding.LayoutAppListItemBinding;
 
 public class AppInfoItemView extends MyAdapterItemLayout<AppInfo> {
-    private ImageView iv_app_icon;
-    private TextView tv_app_label_name;
-    private TextView tv_app_package_name;
+    private LayoutAppListItemBinding binding;
 
     public AppInfoItemView(Context context) {
         super(context);
-        View.inflate(context, R.layout.layout_app_list_item, this);
-        iv_app_icon = findViewById(R.id.iv_app_icon);
-        tv_app_label_name = findViewById(R.id.tv_app_label_name);
-        tv_app_package_name = findViewById(R.id.tv_app_package_name);
+        binding = LayoutAppListItemBinding.inflate(LayoutInflater.from(context));
+        addView(binding.getRoot());
     }
 
     @Override
     public void setData(AppInfo bean, int position, ViewGroup parent) {
-        iv_app_icon.setImageDrawable(bean.getAppIcon());
-        tv_app_label_name.setText(bean.getAppName());
-        tv_app_package_name.setText(bean.getPackageNmae());
+        binding.ivAppIcon.setImageDrawable(bean.getAppIcon());
+        binding.tvAppLabelName.setText(bean.getAppName());
+        binding.tvAppPackageName.setText(bean.getPackageNmae());
     }
 }
