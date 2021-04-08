@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                 AppInfo appInfo = new AppInfo();
                 appInfo.setAppIcon(icon);
                 appInfo.setAppName(appName);
-                appInfo.setPackageNmae(packageName);
+                appInfo.setPackageName(packageName);
                 appInfoList.add(appInfo);
                 if (appPackageName.equals(packageName)) {
                     binding.tvChooseApp.setText(appName);
@@ -297,7 +297,7 @@ public class MainActivity extends AppCompatActivity {
     public void showAppListDialog(View view) {
         AppInfo currentAppInfo = null;
         for (AppInfo appInfo : appInfoList) {
-            if (appInfo.getPackageNmae().equals(appPackageName)) {
+            if (appInfo.getPackageName().equals(appPackageName)) {
                 currentAppInfo = appInfo;
             }
         }
@@ -305,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
         if (currentAppInfo != null) {
             appListDialogBinding.llCurrentApp.ivAppIcon.setImageDrawable(currentAppInfo.getAppIcon());
             appListDialogBinding.llCurrentApp.tvAppLabelName.setText(currentAppInfo.getAppName());
-            appListDialogBinding.llCurrentApp.tvAppPackageName.setText(currentAppInfo.getPackageNmae());
+            appListDialogBinding.llCurrentApp.tvAppPackageName.setText(currentAppInfo.getPackageName());
         }
         MyAdapter<AppInfoItemView, AppInfo> adapter = new MyAdapter<>(this, appInfoList, AppInfoItemView.class, AppInfo.class);
         appListDialogBinding.lvAppList.setAdapter(adapter);
@@ -322,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 binding.tvChooseApp.setText(appInfoList.get(position).getAppName());
-                appPackageName = appInfoList.get(position).getPackageNmae();
+                appPackageName = appInfoList.get(position).getPackageName();
                 sp.edit().putString(SP_KEY_PACKAGE_NAME, appPackageName).apply();
                 dialog.dismiss();
             }

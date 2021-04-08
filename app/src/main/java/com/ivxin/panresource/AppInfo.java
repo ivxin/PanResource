@@ -5,7 +5,7 @@ import android.graphics.drawable.Drawable;
 public class AppInfo {
     private Drawable appIcon;
     private String appName;
-    private String packageNmae;
+    private String packageName;
 
     public Drawable getAppIcon() {
         return appIcon;
@@ -23,11 +23,11 @@ public class AppInfo {
         this.appName = appName;
     }
 
-    public String getPackageNmae() {
-        return packageNmae;
+    public String getPackageName() {
+        return packageName;
     }
 
-    public void setPackageNmae(String packageNmae) {
-        this.packageNmae = packageNmae;
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 }

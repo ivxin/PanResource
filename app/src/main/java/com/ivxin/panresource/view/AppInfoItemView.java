@@ -20,6 +20,6 @@ public class AppInfoItemView extends MyAdapterItemLayout<AppInfo> {
     public void setData(AppInfo bean, int position, ViewGroup parent) {
         binding.ivAppIcon.setImageDrawable(bean.getAppIcon());
         binding.tvAppLabelName.setText(bean.getAppName());
-        binding.tvAppPackageName.setText(bean.getPackageNmae());
+        binding.tvAppPackageName.setText(bean.getPackageName());
     }
 }
