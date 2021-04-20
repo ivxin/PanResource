@@ -1,5 +1,6 @@
 package com.ivxin.panresource;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -90,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         template = sp.getString(SP_KEY_TEMPLATE, getString(R.string.default_template));
         appPackageName = sp.getString(SP_KEY_PACKAGE_NAME, getString(R.string.default_app_package_name));
         isAutomatic = sp.getBoolean(SP_KEY_AUTOMATIC, false);
-        binding = ActivityMainBinding.inflate(LayoutInflater.from(this));
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         binding.cbAutomaticOpen.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -138,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
 //        Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
 //        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 //        final List<ResolveInfo> resolveInfoList = packageManager.queryIntentActivities(mainIntent, 0);
-        List<PackageInfo> packageInfoList = getPackageManager().getInstalledPackages(0);
+        @SuppressLint("QueryPermissionsNeeded") List<PackageInfo> packageInfoList = getPackageManager().getInstalledPackages(0);
         Collections.sort(packageInfoList, new Comparator<PackageInfo>() {
             @Override
             public int compare(PackageInfo o1, PackageInfo o2) {

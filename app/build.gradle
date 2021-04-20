@@ -1,19 +1,71 @@
 apply plugin: 'com.android.application'
 
+static def releaseTime() {
+    return new Date().format("yyyy-MM-dd_HHmmss", TimeZone.getDefault())
+}
+
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    compileSdkVersion 30
+    buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "com.ivxin.panresource"
         minSdkVersion 23
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
     }
-    buildTypes {
+    signingConfigs {
+        //加载资源
+        Properties properties = new Properties()
+        InputStream inputStream = project.rootProject.file('local.properties').newDataInputStream()
+        properties.load(inputStream)
+        //读取字段
+        def debugKeyPath = properties.getProperty('debugkey.path')
+        def keystorePath = properties.getProperty('keystore.path')
+        def keystorePSW = properties.getProperty('keystore.password')
+        def keystoreAlias = properties.getProperty('keystore.alias')
+        def keystoreAliasPSW = properties.getProperty('keystore.alias_password')
+        debug {
+            storeFile file(debugKeyPath)
+            storePassword keystorePSW
+            keyAlias keystoreAlias
+            keyPassword keystoreAliasPSW
+        }
+
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            storeFile file(keystorePath)
+            storePassword keystorePSW
+            keyAlias keystoreAlias
+            keyPassword keystoreAliasPSW
+            v2SigningEnabled false
+        }
+    }
+
+    buildTypes {
+        debug {
+            // 显示Log
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            zipAlignEnabled false
+            signingConfig signingConfigs.debug
+        }
+        release {
+            proguardFiles 'proguard-rules.txt'
+            // 不显示Log
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+            //是否支持Zip Align
+            zipAlignEnabled true
+            // 移除无用的resource文件
+//            minifyEnabled true
+//            shrinkResources true
+            //是否支持本地化整理
+            pseudoLocalesEnabled true
+            signingConfig signingConfigs.release
+            android.applicationVariants.all { variant ->
+                variant.outputs.all {
+                    // 输出apk名称为panresource_v1.0_2015-01-15.apk
+                    outputFileName = "panresource_v${defaultConfig.versionName}_${releaseTime()}.apk"
+                }
+            }
         }
     }
     buildFeatures {
