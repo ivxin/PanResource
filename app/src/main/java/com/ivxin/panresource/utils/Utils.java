@@ -1,4 +1,15 @@
-package com.ivxin.panresource;
+package com.ivxin.panresource.utils;
+
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.util.Log;
+
+import com.hzy.libp7zip.P7ZipApi;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,17 +22,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
+import java.util.Locale;
 import java.util.regex.Pattern;
-
-import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.util.Log;
 
 public class Utils {
     /**
@@ -210,6 +212,7 @@ public class Utils {
 
             // 获取输入流,处理返回的数据
             if (conn.getResponseCode() == 200) {
+                String cookie = conn.getHeaderField("Set-Cookie");
                 result = buildResult(conn.getInputStream());
             } else {
                 result = conn.getResponseCode() + ":" + conn.getResponseMessage();
@@ -303,6 +306,7 @@ public class Utils {
 
     /**
      * 打印log
+     *
      * @param showLog
      * @param tag
      * @param msg
@@ -322,6 +326,7 @@ public class Utils {
             Log.d(tag + "-" + page, format_msg.substring(start, strLength));
         }
     }
+
     /**
      * 格式化
      *
@@ -382,8 +387,22 @@ public class Utils {
             sb.append("\t");
         }
     }
+
     public static void killAppByPID(Context context, int pid) {
         android.os.Process.killProcess(pid);
+    }
+
+    /**
+     * @param file7zPath(7z文件路径)
+     * @param outPutPath(解压路径)
+     * @param passWord(文件密码.没有可随便写,或空)
+     * @return exitCode
+     * @throws Exception
+     * @Description (解压7z)
+     */
+    public static int unZipFile(String file7zPath, final String outPutPath, String passWord) {
+        Log.d("P7ZipApi.get7zVersionInfo()", P7ZipApi.get7zVersionInfo());
+        return P7ZipApi.executeCommand(String.format(Locale.CHINA, "7z x '%s' '-o%s' -aoa -p%s", file7zPath, outPutPath, passWord));
     }
 
 }

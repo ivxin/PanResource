@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true"
+    android:orientation="horizontal"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/iv_file_icon"
+        android:layout_width="70dp"
+        android:layout_height="100dp"
+        android:adjustViewBounds="true"
+        android:padding="5dp"
+        android:src="@drawable/ic_file_24" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_weight="1"
+        android:gravity="top"
+        android:orientation="vertical"
+        android:padding="3dp">
+
+        <me.grantland.widget.AutofitLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_file_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="3"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="asd.7z" />
+        </me.grantland.widget.AutofitLayout>
+
+        <me.grantland.widget.AutofitLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tv_file_path"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="bottom"
+                android:maxLines="4"
+                android:textColor="@color/colorPrimary"
+                android:textSize="10sp"
+                tools:text="/sda/sda/sda/asd.7z" />
+        </me.grantland.widget.AutofitLayout>
+
+        <TextView
+            android:id="@+id/tv_file_create_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimary"
+            android:textSize="12sp"
+            tools:text="2020-11-11 12:12:12" />
+    </LinearLayout>
+</LinearLayout>

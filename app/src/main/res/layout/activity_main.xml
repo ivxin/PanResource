@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".activity.MainActivity">
 
     <ScrollView
         android:id="@+id/sv_main"
@@ -19,7 +19,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Text in Clipboard/Url from other App"
+                android:text="Text in Clipboard, or Url from other App"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="14sp" />
 
@@ -119,49 +119,85 @@
 
             </FrameLayout>
 
-
-            <FrameLayout
-                android:id="@+id/fl_open_app"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="50dp"
-                android:background="@drawable/bg_content_box"
-                android:gravity="center"
-                android:onClick="openApp"
                 android:orientation="horizontal">
 
-                <TextView
+                <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="20dp"
+                    android:layout_weight="1"
+                    android:onClick="openBrowser"
+                    android:background="@drawable/bg_content_box"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="20dp"
+                        android:gravity="center"
+                        android:text="Copy passCode and open link in Browser"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp" />
+                </FrameLayout>
+
+
+                <FrameLayout
+                    android:id="@+id/fl_open_app"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_content_box"
                     android:gravity="center"
-                    android:text="Write into Clipboard and open App"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp" />
+                    android:onClick="openApp">
 
-                <TextView
-                    android:id="@+id/tv_choose_app"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|bottom"
-                    android:background="@drawable/bg_btn_item_choose"
-                    android:onClick="showAppListDialog"
-                    android:paddingStart="5dp"
-                    android:paddingEnd="5dp"
-                    android:text="Choose App"
-                    android:textColor="@android:color/white" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="20dp"
+                        android:gravity="center"
+                        android:text="Write into Clipboard and open App"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp" />
 
-                <CheckBox
-                    android:id="@+id/cb_automatic_open"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="top|start"
-                    android:layout_marginStart="-7dp"
-                    android:layout_marginTop="-7dp"
-                    android:text="automatic"
-                    android:textSize="12sp" />
-            </FrameLayout>
+                    <TextView
+                        android:id="@+id/tv_choose_app"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end|bottom"
+                        android:background="@drawable/bg_btn_item_choose"
+                        android:onClick="showAppListDialog"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
+                        android:text="Choose App"
+                        android:textColor="@android:color/white" />
+
+                    <CheckBox
+                        android:id="@+id/cb_automatic_open"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|start"
+                        android:layout_marginStart="-7dp"
+                        android:layout_marginTop="-7dp"
+                        android:text="automatic"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="50dp"
+                android:background="@drawable/bg_content_box"
+                android:gravity="center"
+                android:onClick="find7zFile"
+                android:text="Scan zip file" />
 
             <FrameLayout
                 android:layout_width="match_parent"

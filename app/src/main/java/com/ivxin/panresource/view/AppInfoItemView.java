@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.ivxin.panresource.AppInfo;
+import com.ivxin.panresource.eneity.AppInfo;
 import com.ivxin.panresource.databinding.LayoutAppListItemBinding;
 
 public class AppInfoItemView extends MyAdapterItemLayout<AppInfo> {

@@ -1,9 +1,8 @@
-package com.ivxin.panresource;
+package com.ivxin.panresource.activity;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -21,16 +20,19 @@ import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewbinding.BuildConfig;
 
+import com.ivxin.panresource.R;
+import com.ivxin.panresource.base.BaseActivity;
+import com.ivxin.panresource.base.Constant;
 import com.ivxin.panresource.databinding.ActivityMainBinding;
 import com.ivxin.panresource.databinding.LayoutAppListDialogBinding;
 import com.ivxin.panresource.databinding.LayoutWebLoadDialogBinding;
+import com.ivxin.panresource.eneity.AppInfo;
+import com.ivxin.panresource.utils.Utils;
 import com.ivxin.panresource.view.AppInfoItemView;
 import com.ivxin.panresource.view.MyAdapter;
 
@@ -43,27 +45,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MainActivity extends AppCompatActivity {
-    public static final String SP_FILE = "SP_FILE";
-    public static final String SP_KEY_TEMPLATE = "SP_KEY_TEMPLATE";
-    public static final String SP_KEY_PACKAGE_NAME = "SP_KEY_PACKAGE_NAME";
-    public static final String SP_KEY_AUTOMATIC = "SP_KEY_AUTOMATIC";
-    private static String template = "";
-    private static String appPackageName = "";
-    private static boolean isAutomatic;
-    private SharedPreferences sp;
+
+public class MainActivity extends BaseActivity {
+
     private final List<AppInfo> appInfoList = new ArrayList<>();
 
     private ActivityMainBinding binding;
     private String url;
     private boolean isOpenFromOther = false;
 
-    public void toast(CharSequence text) {
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,29 +73,31 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-        sp = getSharedPreferences(SP_FILE, MODE_PRIVATE);
-        if (!sp.contains(SP_KEY_PACKAGE_NAME)) {
+        if (!sp.contains(Constant.SP_KEY_PACKAGE_NAME)) {
             showTipDialog();
-        } else {
             sp.edit()
-                    .putString(SP_KEY_TEMPLATE, getString(R.string.default_template))
-                    .putString(SP_KEY_PACKAGE_NAME, getString(R.string.default_app_package_name))
+                    .putString(Constant.SP_KEY_TEMPLATE, getString(R.string.default_template))
+                    .putString(Constant.SP_KEY_PACKAGE_NAME, getString(R.string.default_app_package_name))
                     .apply();
         }
-        template = sp.getString(SP_KEY_TEMPLATE, getString(R.string.default_template));
-        appPackageName = sp.getString(SP_KEY_PACKAGE_NAME, getString(R.string.default_app_package_name));
-        isAutomatic = sp.getBoolean(SP_KEY_AUTOMATIC, false);
+        initStatic();
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         binding.cbAutomaticOpen.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                sp.edit().putBoolean(SP_KEY_AUTOMATIC, isChecked).apply();
-                isAutomatic = isChecked;
+                sp.edit().putBoolean(Constant.SP_KEY_AUTOMATIC, isChecked).apply();
+                Constant.isAutomatic = isChecked;
             }
         });
-        binding.cbAutomaticOpen.setChecked(isAutomatic);
+        binding.cbAutomaticOpen.setChecked(Constant.isAutomatic);
         readDeviceApps();
+    }
+
+    private void initStatic() {
+        Constant.template = sp.getString(Constant.SP_KEY_TEMPLATE, getString(R.string.default_template));
+        Constant.appPackageName = sp.getString(Constant.SP_KEY_PACKAGE_NAME, getString(R.string.default_app_package_name));
+        Constant.isAutomatic = sp.getBoolean(Constant.SP_KEY_AUTOMATIC, false);
     }
 
     @Override
@@ -156,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                 appInfo.setAppName(appName);
                 appInfo.setPackageName(packageName);
                 appInfoList.add(appInfo);
-                if (appPackageName.equals(packageName)) {
+                if (Constant.appPackageName.equals(packageName)) {
                     binding.tvChooseApp.setText(appName);
                 }
             }
@@ -214,15 +210,16 @@ public class MainActivity extends AppCompatActivity {
         if (theCode.length() == 28 && "-".equals(theCode.substring(23, 24))) {
             String code = theCode.substring(0, 23);
             String pass = theCode.substring(24, 28);
-            formatted = String.format(template, code, pass);
+            formatted = String.format(Constant.template, code, pass);
         } else if (theCode.length() == 23) {
-            formatted = String.format(template, theCode, "");
+            formatted = String.format(Constant.template, theCode, "");
         } else {
-            formatted = template.replaceAll("%s", theCode);
+            formatted = Constant.template.replaceAll("%s", theCode);
         }
         binding.tvTextPreview.setText(formatted);
         binding.svMain.scrollTo(0, binding.svMain.getBottom());
-        if (theCode.matches(getString(R.string.code_rex)) && isAutomatic) {
+        Constant.isAutomatic = false;//自动功能预计废除
+        if (theCode.matches(getString(R.string.code_rex)) && Constant.isAutomatic) {
             toast("Code found! now open the specific app in 3s");
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -281,24 +278,24 @@ public class MainActivity extends AppCompatActivity {
         final EditText editText = new EditText(this);
         editText.setPadding(50, 30, 30, 50);
         editText.setBackgroundResource(R.drawable.bg_content_box);
-        editText.setText(template);
+        editText.setText(Constant.template);
         final AlertDialog dialog = new AlertDialog.Builder(this).setView(editText).setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                template = editText.getText().toString();
-                sp.edit().putString(SP_KEY_TEMPLATE, template).apply();
+                Constant.template = editText.getText().toString();
+                sp.edit().putString(Constant.SP_KEY_TEMPLATE, Constant.template).apply();
                 checkClipboard();
             }
         }).create();
         dialog.show();
         editText.requestFocus();
-        editText.setSelection(template.length());
+        editText.setSelection(Constant.template.length());
     }
 
     public void showAppListDialog(View view) {
         AppInfo currentAppInfo = null;
         for (AppInfo appInfo : appInfoList) {
-            if (appInfo.getPackageName().equals(appPackageName)) {
+            if (appInfo.getPackageName().equals(Constant.appPackageName)) {
                 currentAppInfo = appInfo;
             }
         }
@@ -323,21 +320,49 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 binding.tvChooseApp.setText(appInfoList.get(position).getAppName());
-                appPackageName = appInfoList.get(position).getPackageName();
-                sp.edit().putString(SP_KEY_PACKAGE_NAME, appPackageName).apply();
+                Constant.appPackageName = appInfoList.get(position).getPackageName();
+                sp.edit().putString(Constant.SP_KEY_PACKAGE_NAME, Constant.appPackageName).apply();
                 dialog.dismiss();
             }
         });
         dialog.show();
     }
 
+    public void openBrowser(View view) {
+        String fullCode = binding.tvCodePreview.getText().toString();
+        if (fullCode.length() == 28 && "-".equals(fullCode.substring(23, 24))) {
+            String code = fullCode.substring(0, 23);
+            String pass = fullCode.substring(24, 28);
+            String url = String.format(Locale.CHINA, "https://pan.baidu.com/s/%s", code);
+            Utils.putTextIntoClipBoard(this, "", pass);
+            Uri uri = Uri.parse(url);
+            Intent intent = new Intent();
+            intent.setAction("android.intent.action.VIEW");
+            intent.setData(uri);
+            startActivity(intent);
+        } else {
+            toast("no code found");
+        }
+    }
+
     public void openApp(View view) {
-        Utils.putTextIntoClipBoard(this, "", binding.tvTextPreview.getText().toString());
-        Utils.startAppByPackageName(this, appPackageName);
+        String fullCode = binding.tvCodePreview.getText().toString();
+        if (fullCode.length() == 28 && "-".equals(fullCode.substring(23, 24))) {
+            Utils.putTextIntoClipBoard(this, "", binding.tvTextPreview.getText().toString());
+            Utils.startAppByPackageName(this, Constant.appPackageName);
+        } else {
+            toast("no code found");
+        }
     }
 
     public void clearClipboard(View view) {
         Utils.putTextIntoClipBoard(this, "", "");
         checkClipboard();
     }
+
+    public void find7zFile(View view) {
+        gotoOther(ZipFileActivity.class);
+    }
+
+
 }

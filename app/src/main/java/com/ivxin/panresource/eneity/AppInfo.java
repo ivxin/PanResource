@@ -1,4 +1,4 @@
-package com.ivxin.panresource;
+package com.ivxin.panresource.eneity;
 
 import android.graphics.drawable.Drawable;
 
