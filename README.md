@@ -18,5 +18,5 @@ https://down.iroha.fans/f/24486174-496695924-c51878
 
 
 ####  个人博客
-https://www.iroha.fans/archives/panresource-%E7%BD%91%E7%9B%98%E5%B0%8F%E5%B7%A5%E5%85%B7
+https://www.iroha.fans/archives/panresourcetool
 
