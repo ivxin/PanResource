@@ -23,37 +23,26 @@
         android:orientation="vertical"
         android:padding="3dp">
 
-        <me.grantland.widget.AutofitLayout
+        <com.qmuiteam.qmui.widget.QMUIFontFitTextView
+            android:id="@+id/tv_file_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:maxLines="3"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="asd.7z" />
 
-            <TextView
-                android:id="@+id/tv_file_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLines="3"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                tools:text="asd.7z" />
-        </me.grantland.widget.AutofitLayout>
-
-        <me.grantland.widget.AutofitLayout
+        <com.qmuiteam.qmui.widget.QMUIFontFitTextView
+            android:id="@+id/tv_file_path"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/tv_file_path"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="bottom"
-                android:maxLines="4"
-                android:textColor="@color/colorPrimary"
-                android:textSize="10sp"
-                tools:text="/sda/sda/sda/asd.7z" />
-        </me.grantland.widget.AutofitLayout>
+            android:layout_weight="1"
+            android:gravity="bottom"
+            android:maxLines="4"
+            android:textColor="@color/colorPrimary"
+            android:textSize="10sp"
+            tools:text="/sda/sda/sda/asd.7z" />
 
         <TextView
             android:id="@+id/tv_file_create_date"

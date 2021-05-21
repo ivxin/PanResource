@@ -7,6 +7,8 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.util.Log;
 
 import com.hzy.libp7zip.P7ZipApi;
@@ -26,6 +28,42 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class Utils {
+
+    /**
+     * 外部打开url链接
+     *
+     * @param context
+     * @param url
+     * @param withDefault 是否使用默认浏览器
+     *                    activity需要加上scheme配置实现选择列表
+     *                    <intent-filter>
+     *                    <action android:name="android.intent.action.VIEW" />
+     *                    <category android:name="android.intent.category.DEFAULT" />
+     *                    <data android:scheme="http" />
+     *                    <data android:scheme="https" />
+     *                    </intent-filter>
+     */
+    public static void openUrlWithOtherApp(Context context, String url, boolean withDefault) {
+        Uri uri = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        intent.addCategory(Intent.CATEGORY_BROWSABLE);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        if (withDefault) {
+            context.startActivity(intent);
+        } else {
+            intent.putExtra("url", url);
+            PackageManager pm = context.getPackageManager();
+            List<ResolveInfo> resolveList = pm.queryIntentActivities(intent, PackageManager.MATCH_ALL);
+            if (resolveList.size() > 0) {
+                Intent intentChooser = Intent.createChooser(intent, "选择浏览器");
+                context.startActivity(intentChooser);
+            } else {
+                ToastUtil.show(context, "没有找到合适的应用");
+            }
+        }
+    }
+
+
     /**
      * 判断是否安装目标应用
      *
@@ -401,7 +439,7 @@ public class Utils {
      * @Description (解压7z)
      */
     public static int unZipFile(String file7zPath, final String outPutPath, String passWord) {
-        Log.d("P7ZipApi.get7zVersionInfo()", P7ZipApi.get7zVersionInfo());
+        Utils.printLog(true,"P7ZipApi.get7zVersionInfo()", P7ZipApi.get7zVersionInfo());
         return P7ZipApi.executeCommand(String.format(Locale.CHINA, "7z x '%s' '-o%s' -aoa -p%s", file7zPath, outPutPath, passWord));
     }
 

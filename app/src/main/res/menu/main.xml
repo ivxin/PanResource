@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_help"
-        android:title="\?"
+        android:orderInCategory="98"
+        android:title="使用方法"
+        app:showAsAction="collapseActionView" />
+    <item
+        android:id="@+id/action_check"
+        android:orderInCategory="99"
+        android:title="检查更新"
+        app:showAsAction="collapseActionView" />
+    <item
+        android:id="@+id/action_about"
         android:orderInCategory="100"
-        app:showAsAction="always" />
+        android:title="关于"
+        app:showAsAction="collapseActionView" />
+
 </menu>

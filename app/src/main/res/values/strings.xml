@@ -1,14 +1,50 @@
 <resources>
-    <string name="app_name">PanShareCodeTool</string>
+    <string name="app_name">网盘小工具</string>
     <string name="default_template">链接：https://pan.baidu.com/s/%s 提取码：%s  复制这段内 >容后打开百度网盘手机App，操作更方便哦</string>
     <string name="default_app_package_name">com.baidu.netdisk</string>
     <string name="code_rex">[a-zA-Z0-9+-_]{23}-[a-zA-Z0-9]{4}</string>
-    <string name="tip">使用方法有三种：
-        \n1.公众号文章右上角——>在浏览器打开——>选择PanShareCodeTool
-        \n2.公众号文章右上角——>复制链接——>打开PanShareCodeTool
-        \n3.文章内复制含有分享码的文本——>打开PanShareCodeTool
-        \n  正常情况就可以得到粗体的分享码了，最下面的方块可以打开对应的app（右下角也可以更换app），也可以选择自动打开
-        \n  有疑问联系iroha.acg@iroha.com.cn
+    <string name="nothing_found">什么都没找到</string>
+
+    <string name="tip" formatted="false"><![CDATA[
+        使用方法有三种：<br>
+        1.公众号文章右上角——>在浏览器打开——>选择本工具<br>
+        2.公众号文章右上角——>复制链接——>选择本工具<br>
+        3.公众号文章内复制含有分享码的文本——>选择本工具<br>
+          正常情况就可以得到粗体的分享码了，可以打开对应的app,或者在浏览器里面打开链接<br>
+]]></string>
+    <string name="about" formatted="false"><![CDATA[
+
+<h1>关于%s</h1>
+
+<font size=1><b>版本v%s</b></font><br><br>
+
+<font size=1><b>使用第三方组件:</b></font><br>
+
+<font size=1>org.jsoup:jsoup:1.11.3</font><br>
+
+<font size=1>com.qianwen:update-app:3.5.2</font><br>
+
+<font size=1>com.daimajia.numberprogressbar:library:1.4@aar</font><br>
+
+<font size=1>com.qmuiteam:qmui:2.0.0-alpha10</font><br>
+
+<font size=1>com.hzy:libp7zip:1.7.0</font><br>
+
+<font size=1>com.susion:image-viewer:1.0.2</font><br>
+
+<font size=1>com.github.bumptech.glide:glide:4.9.0</font><br>
+
+<font size=1>com.zhy:percent-support-extends:1.1.1</font><br>
+
+<font size=1><b>使用第三方服务:</b></font><br>
+
+<font size=1>io.github.bmob:android-sdk:3.8.4</font><br>
+
+<font size=1><b>Github项目地址:</b></font><br>
+
+<font size=1><a href="https://https://github.com/ivxin/PanResource">https://github.com/ivxin/PanResource</a></font><br>
+
+
+]]>
     </string>
-    <string name="nothing_found">nothing found</string>
 </resources>

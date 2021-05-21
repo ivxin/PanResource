@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.qmuiteam.qmui.widget.textview.QMUILinkTextView
+                android:id="@+id/tv_update_log"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/bg_long_text"
+                android:padding="10dp"
+                tools:text="1.asdasd\n2.asdcza" />
+
+            <com.qmuiteam.qmui.widget.QMUIProgressBar
+                android:id="@+id/pb_update"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:visibility="invisible"
+                app:qmui_background_color="@color/qmui_config_color_gray_9"
+                app:qmui_max_value="100"
+                app:qmui_progress_color="@color/qmui_config_color_50_blue"
+                app:qmui_stroke_round_cap="true"
+                app:qmui_stroke_width="1dp"
+                app:qmui_type="type_rect"
+                app:qmui_value="0" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical|end">
+
+                <Button
+                    android:id="@+id/btn_copy_link"
+                    style="?QMUIButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="30dp"
+                    android:padding="10dp"
+                    android:text="复制链接" />
+
+                <Button
+                    android:id="@+id/btn_cancel"
+                    style="?QMUIButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="下次再说" />
+
+                <Button
+                    android:id="@+id/btn_update"
+                    style="?QMUIButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="下载更新"
+                    android:visibility="visible" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>

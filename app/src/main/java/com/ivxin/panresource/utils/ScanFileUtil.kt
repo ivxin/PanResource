@@ -55,18 +55,6 @@ import java.util.*
 @Suppress("unused")
 class ScanFileUtil {
 
-    companion object {
-        //手机外部存储根目录 Mobile storage root directory
-        val externalStorageDirectory: String by lazy {
-            Environment.getExternalStorageDirectory().absolutePath
-        }
-
-        //手机app缓存存放路径 Mobile app cache storage path
-        val android_app_data_folder: String by lazy {
-            "$externalStorageDirectory/Android/data"
-        }
-    }
-
     /**
      * 是否停止扫描
      * Whether to stop scanning

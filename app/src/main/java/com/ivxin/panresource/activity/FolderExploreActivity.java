@@ -1,6 +1,7 @@
 package com.ivxin.panresource.activity;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -22,11 +23,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 
 public class FolderExploreActivity extends BaseActivity {
     public static final String KEY_PATH = "KEY_PATH";
-    public static String path = "";
+    public String path = "";
     private ActivityFolderExploreBinding binding;
     private List<File> fileList = new ArrayList<>();
     private MyAdapter<FileInfoItemView, File> arrayAdapter;
@@ -39,35 +41,22 @@ public class FolderExploreActivity extends BaseActivity {
         if (getIntent() != null) {
             path = getIntent().getStringExtra(KEY_PATH);
         }
-
         if (TextUtils.isEmpty(path) || !new File(path).isDirectory()) {
-            toast("dir error");
+            toast("路径不正确");
             finish();
         }
         binding.tvDir.setText(path);
         arrayAdapter = new MyAdapter<>(this, fileList, FileInfoItemView.class, File.class);
-        File folder = new File(path);
-        File[] files = folder.listFiles();
-        if (files != null && files.length > 0) {
-            Collections.addAll(fileList, files);
-        }
-        Collections.sort(fileList, new Comparator<File>() {
+        binding.lvFiles.setAdapter(arrayAdapter);
+        binding.lvFiles.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public int compare(File o1, File o2) {
-                if (o1.isFile() && o2.isDirectory()) {
-                    return 1;
-                } else if (o1.isDirectory() && o2.isFile()) {
-                    return -1;
-                } else if (o1.isFile() && o2.isFile()) {
-                    return o2.getName().compareTo(o1.getName());
-                } else if (o1.isDirectory() && o2.isDirectory()) {
-                    return o2.getName().compareTo(o1.getName());
-                } else
-                    return 0;
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                String filePath = fileList.get(position).getPath();
+                Utils.putTextIntoClipBoard(getApplicationContext(), "", filePath);
+                toast("复制了文件地址\n" + filePath);
+                return true;
             }
         });
-        binding.lvFiles.setAdapter(arrayAdapter);
-        arrayAdapter.notifyDataSetChanged();
         binding.lvFiles.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -103,6 +92,14 @@ public class FolderExploreActivity extends BaseActivity {
 //                                }
 //                            }).start();
 //                            break;
+//                            if (Utils.isInstalledByPackageName("com.lgallardo.qbittorrentclient")) {
+//                                PackageManager packageManager = FolderExploreActivity.this.getPackageManager();
+//                                Intent intent = new Intent();
+//                                intent.putExtra("",)
+//                                intent = packageManager.getLaunchIntentForPackage("com.lgallardo.qbittorrentclient");
+//                                startActivity(intent);
+////                                Utils.startAppByPackageName(FolderExploreActivity.this, "com.lgallardo.qbittorrentclient");
+//                            }
                         default:
                             FileUtils.openFile(getApplicationContext(), file);
                             break;
@@ -112,11 +109,42 @@ public class FolderExploreActivity extends BaseActivity {
                     intent.putExtra(FolderExploreActivity.KEY_PATH, file.getPath());
                     gotoOther(intent);
                 } else {
-                    toast("It's a file.");
+                    toast("It's not a file or folder.");
                 }
 
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        readFolder(null);
+    }
+
+    private void readFolder(View view) {
+        fileList.clear();
+        File folder = new File(path);
+        File[] files = folder.listFiles();
+        if (files != null && files.length > 0) {
+            Collections.addAll(fileList, files);
+        }
+        Collections.sort(fileList, new Comparator<File>() {
+            @Override
+            public int compare(File o1, File o2) {
+                if (o1.isFile() && o2.isDirectory()) {
+                    return 1;
+                } else if (o1.isDirectory() && o2.isFile()) {
+                    return -1;
+                } else if (o1.isFile() && o2.isFile()) {
+                    return o2.getName().compareTo(o1.getName());
+                } else if (o1.isDirectory() && o2.isDirectory()) {
+                    return o2.getName().compareTo(o1.getName());
+                } else
+                    return 0;
+            }
+        });
+        arrayAdapter.notifyDataSetChanged();
     }
 
     private void showImageViewDialog(File file) {
@@ -124,7 +152,7 @@ public class FolderExploreActivity extends BaseActivity {
         for (File ifImageFile : fileList) {
             String[] extensions = new String[]{"jpg", "jpeg", "png", "webp", "bmp"};
             for (String ext : extensions) {
-                if (FileUtils.getFileExtension(file).toLowerCase().endsWith(ext)) {
+                if (FileUtils.getFileExtension(ifImageFile).toLowerCase().endsWith(ext)) {
                     imags.add(ifImageFile.getPath());
                     break;
                 }
@@ -160,16 +188,21 @@ public class FolderExploreActivity extends BaseActivity {
                         public void run() {
                             switch (exitCode) {
                                 case 0:
-                                    toast("unzip to " + outPutPath);
+                                    toast("已解压到：" + outPutPath);
+                                    HashSet<String> outPutPathSet = (HashSet<String>) sp.getStringSet(Constant.SP_KEY_OUTPUT_PATH_SET, new HashSet<>());
+                                    outPutPathSet.add(outPutPath);
+                                    sp.edit().putStringSet(Constant.SP_KEY_OUTPUT_PATH_SET, outPutPathSet).apply();
                                     Intent intent = new Intent(FolderExploreActivity.this, FolderExploreActivity.class);
                                     intent.putExtra(FolderExploreActivity.KEY_PATH, outPutPath);
                                     gotoOther(intent);
                                     break;
                                 case 2:
-                                    toast("wrong password");
+                                    toast("解压缩异常,可能密码错误,也可能解压完成,直接检查目录");
+                                    readFolder(null);
                                     break;
                                 default:
-                                    toast("unzip fail");
+                                    toast("解压缩失败");
+                                    readFolder(null);
                                     break;
                             }
 

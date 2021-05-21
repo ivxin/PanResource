@@ -1,5 +1,6 @@
 package com.ivxin.panresource.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,8 +9,12 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.Settings;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,22 +24,29 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.viewbinding.BuildConfig;
 
 import com.ivxin.panresource.R;
 import com.ivxin.panresource.base.BaseActivity;
 import com.ivxin.panresource.base.Constant;
+import com.ivxin.panresource.base.OnActivityResultListener;
 import com.ivxin.panresource.databinding.ActivityMainBinding;
 import com.ivxin.panresource.databinding.LayoutAppListDialogBinding;
 import com.ivxin.panresource.databinding.LayoutWebLoadDialogBinding;
 import com.ivxin.panresource.eneity.AppInfo;
+import com.ivxin.panresource.utils.UpdateManager;
 import com.ivxin.panresource.utils.Utils;
 import com.ivxin.panresource.view.AppInfoItemView;
 import com.ivxin.panresource.view.MyAdapter;
+import com.qmuiteam.qmui.util.QMUIKeyboardHelper;
+import com.qmuiteam.qmui.widget.textview.QMUILinkTextView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -74,7 +86,7 @@ public class MainActivity extends BaseActivity {
             }
         }
         if (!sp.contains(Constant.SP_KEY_PACKAGE_NAME)) {
-            showTipDialog();
+            showTipDialog(getString(R.string.tip));
             sp.edit()
                     .putString(Constant.SP_KEY_TEMPLATE, getString(R.string.default_template))
                     .putString(Constant.SP_KEY_PACKAGE_NAME, getString(R.string.default_app_package_name))
@@ -110,17 +122,62 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_help) {
-            showTipDialog();
+            showTipDialog(getString(R.string.tip));
+        } else if (item.getItemId() == R.id.action_check) {
+            requestFileAccessPermission(new OnFileAccessGrantedListener() {
+                @Override
+                public void onFileAccessGranted() {
+                    UpdateManager manager = new UpdateManager(MainActivity.this);
+                    manager.checkUpdate();
+                }
+            });
+
+        } else if (item.getItemId() == R.id.action_about) {
+            String content = String.format(Locale.CHINA, getString(R.string.about), getString(R.string.app_name), Constant.verisonName);
+            showTipDialog(content);
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void showTipDialog() {
-        final TextView textView = new TextView(this);
+    private void showTipDialog(String content) {
+        FrameLayout layout = new FrameLayout(this);
+        int padding = 50;
+        layout.setPadding(padding, padding, padding, padding);
+        final QMUILinkTextView textView = new QMUILinkTextView(this);
         textView.setPadding(50, 30, 30, 50);
         textView.setBackgroundResource(R.drawable.bg_content_box);
-        textView.setText(R.string.tip);
-        final AlertDialog dialog = new AlertDialog.Builder(this).setView(textView).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        textView.setOnLinkClickListener(new QMUILinkTextView.OnLinkClickListener() {
+            @Override
+            public void onTelLinkClick(String phoneNumber) {
+                Intent intent = new Intent(Intent.ACTION_CALL);
+                intent.setData(Uri.parse("tel:" + phoneNumber));
+                startActivity(intent);
+            }
+
+            @Override
+            public void onMailLinkClick(String mailAddress) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                String[] receiver;
+                receiver = new String[]{mailAddress};
+                intent.putExtra(Intent.EXTRA_EMAIL, receiver);
+                intent.putExtra("subject", "About " + getString(R.string.app_name));
+                intent.putExtra(Intent.EXTRA_TEXT, "/*Thanks advance for any tips.*/");
+                intent.setType("text/plain");
+                startActivity(Intent.createChooser(intent, "Choose Email Client")); //调用系统的mail客户端进行发送
+            }
+
+            @Override
+            public void onWebUrlLinkClick(String url) {
+                Utils.openUrlWithOtherApp(MainActivity.this, url, false);
+            }
+        });
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            textView.setText(Html.fromHtml(content, 0));
+        }else{
+            textView.setText(Html.fromHtml(content));
+        }
+        layout.addView(textView);
+        final AlertDialog dialog = new AlertDialog.Builder(this).setView(layout).setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -233,6 +290,7 @@ public class MainActivity extends BaseActivity {
     public void showWebLoadingDialog(View view) {
         LayoutWebLoadDialogBinding webLoadBinding = LayoutWebLoadDialogBinding.inflate(LayoutInflater.from(this));
         final AlertDialog dialog = new AlertDialog.Builder(this).setView(webLoadBinding.getRoot()).create();
+        dialog.show();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -245,7 +303,11 @@ public class MainActivity extends BaseActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            binding.tvLoadWebAndFindCode.setText(htmlText.substring(0, 30).concat("..."));
+                            if (htmlText.length() > 30) {
+                                binding.tvLoadWebAndFindCode.setText(htmlText.substring(0, 30).concat("..."));
+                            } else {
+                                binding.tvLoadWebAndFindCode.setText(htmlText);
+                            }
                             findTheCode(htmlText);
                             dialog.dismiss();
                         }
@@ -255,7 +317,6 @@ public class MainActivity extends BaseActivity {
                 }
             }
         }).start();
-        dialog.show();
     }
 
     private void findTheCode(String htmlText) {
@@ -267,8 +328,12 @@ public class MainActivity extends BaseActivity {
             while (matcher.find()) {
                 theCode = matcher.group();
             }
-            binding.tvCodePreview.setText(theCode);
-            formatCode(theCode);
+            if (theCode.length() > 22) {
+                binding.tvCodePreview.setText(theCode);
+                formatCode(theCode);
+            } else {
+                binding.tvCodePreview.setText("没找到code");
+            }
         } else {
             binding.tvCodePreview.setText("");
         }
@@ -279,7 +344,7 @@ public class MainActivity extends BaseActivity {
         editText.setPadding(50, 30, 30, 50);
         editText.setBackgroundResource(R.drawable.bg_content_box);
         editText.setText(Constant.template);
-        final AlertDialog dialog = new AlertDialog.Builder(this).setView(editText).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        final AlertDialog dialog = new AlertDialog.Builder(this).setView(editText).setTitle("修改模板").setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Constant.template = editText.getText().toString();
@@ -290,6 +355,7 @@ public class MainActivity extends BaseActivity {
         dialog.show();
         editText.requestFocus();
         editText.setSelection(Constant.template.length());
+        QMUIKeyboardHelper.showKeyboard(editText, true);
     }
 
     public void showAppListDialog(View view) {
@@ -335,13 +401,9 @@ public class MainActivity extends BaseActivity {
             String pass = fullCode.substring(24, 28);
             String url = String.format(Locale.CHINA, "https://pan.baidu.com/s/%s", code);
             Utils.putTextIntoClipBoard(this, "", pass);
-            Uri uri = Uri.parse(url);
-            Intent intent = new Intent();
-            intent.setAction("android.intent.action.VIEW");
-            intent.setData(uri);
-            startActivity(intent);
+            Utils.openUrlWithOtherApp(this, url, false);
         } else {
-            toast("no code found");
+            toast("没有code");
         }
     }
 
@@ -351,7 +413,7 @@ public class MainActivity extends BaseActivity {
             Utils.putTextIntoClipBoard(this, "", binding.tvTextPreview.getText().toString());
             Utils.startAppByPackageName(this, Constant.appPackageName);
         } else {
-            toast("no code found");
+            toast("没有code");
         }
     }
 
@@ -361,8 +423,12 @@ public class MainActivity extends BaseActivity {
     }
 
     public void find7zFile(View view) {
-        gotoOther(ZipFileActivity.class);
+        requestFileAccessPermission(new OnFileAccessGrantedListener() {
+            @Override
+            public void onFileAccessGranted() {
+                gotoOther(ZipFileActivity.class);
+            }
+        });
     }
-
 
 }

@@ -24,9 +24,11 @@ public class FileInfoItemView extends MyAdapterItemLayout<File> {
 
     @Override
     public void setData(File bean, int position, ViewGroup parent) {
+        Glide.with(this).clear(binding.ivFileIcon);
         binding.ivFileIcon.setImageDrawable(null);
+        binding.ivFileIcon.setImageBitmap(null);
         binding.ivFileIcon.setBackground(null);
-        binding.ivFileIcon.setImageResource(R.drawable.ic_file_24);
+        binding.ivFileIcon.setImageResource(0);
         if (bean.isDirectory()) {
             binding.ivFileIcon.setImageResource(R.drawable.ic_folder_24);
         } else if (bean.isFile()) {
@@ -36,8 +38,6 @@ public class FileInfoItemView extends MyAdapterItemLayout<File> {
                 if (bean.getPath().toLowerCase().endsWith(ext)) {
                     Glide.with(this).load(bean.getPath()).error(R.drawable.ic_file_24).into(binding.ivFileIcon);
                     break;
-                } else {
-                    binding.ivFileIcon.setImageResource(R.drawable.ic_file_24);
                 }
             }
             String[] zipExtents = new String[]{".zip", ".rar", ".7z", ".tar", ".cab"};

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -19,7 +20,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Text in Clipboard, or Url from other App"
+                android:text="剪贴板文字 或 来自其他App的链接"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="14sp" />
 
@@ -34,7 +35,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:text="Hello World!"
                     android:textColor="@color/colorPrimary"
                     android:textSize="12sp" />
 
@@ -47,7 +47,7 @@
                     android:onClick="clearClipboard"
                     android:paddingStart="5dp"
                     android:paddingEnd="5dp"
-                    android:text="Clear Clipboard"
+                    android:text="清空剪贴板"
                     android:textColor="@android:color/white" />
             </FrameLayout>
 
@@ -60,7 +60,7 @@
                 android:onClick="showWebLoadingDialog"
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"
-                android:text="It's a link? Click to find the code."
+                android:text="如果是链接,点击这里找code"
                 android:textColor="@android:color/white"
                 android:textSize="14sp" />
 
@@ -68,7 +68,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="Code shows here, check it:"
+                android:text="code显示在这里👇, 检查一下:"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="12sp" />
 
@@ -86,7 +86,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:text="Formatted Text Preview"
+                android:text="整理好的分享文本预览👇"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="14sp" />
 
@@ -101,7 +101,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:text="Hello World!"
                     android:textColor="@color/colorPrimary"
                     android:textSize="12sp" />
 
@@ -114,12 +113,12 @@
                     android:onClick="showTemplateEditDialog"
                     android:paddingStart="5dp"
                     android:paddingEnd="5dp"
-                    android:text="Edit Template"
+                    android:text="编辑分享模板"
                     android:textColor="@android:color/white" />
 
             </FrameLayout>
 
-            <LinearLayout
+            <com.zhy.android.percent.support.PercentLinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="50dp"
@@ -128,32 +127,36 @@
                 <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:onClick="openBrowser"
                     android:background="@drawable/bg_content_box"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:onClick="openBrowser"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="20dp"
+                    app:layout_widthPercent="45%">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_margin="20dp"
                         android:gravity="center"
-                        android:text="Copy passCode and open link in Browser"
+                        android:text="复制密码\n用浏览器打开分享链接"
                         android:textColor="@color/colorPrimary"
                         android:textSize="14sp" />
                 </FrameLayout>
 
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    app:layout_widthPercent="10%" />
 
                 <FrameLayout
                     android:id="@+id/fl_open_app"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="1"
                     android:background="@drawable/bg_content_box"
                     android:gravity="center"
-                    android:onClick="openApp">
+                    android:onClick="openApp"
+                    app:layout_widthPercent="45%">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -161,7 +164,7 @@
                         android:layout_gravity="center"
                         android:layout_margin="20dp"
                         android:gravity="center"
-                        android:text="Write into Clipboard and open App"
+                        android:text="复制分享文本\n然后打开App👇"
                         android:textColor="@color/colorPrimary"
                         android:textSize="14sp" />
 
@@ -174,7 +177,7 @@
                         android:onClick="showAppListDialog"
                         android:paddingStart="5dp"
                         android:paddingEnd="5dp"
-                        android:text="Choose App"
+                        android:text="选择App"
                         android:textColor="@android:color/white" />
 
                     <CheckBox
@@ -184,11 +187,11 @@
                         android:layout_gravity="top|start"
                         android:layout_marginStart="-7dp"
                         android:layout_marginTop="-7dp"
-                        android:text="automatic"
+                        android:text="自动↘"
                         android:textSize="12sp"
                         android:visibility="gone" />
                 </FrameLayout>
-            </LinearLayout>
+            </com.zhy.android.percent.support.PercentLinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
@@ -197,7 +200,7 @@
                 android:background="@drawable/bg_content_box"
                 android:gravity="center"
                 android:onClick="find7zFile"
-                android:text="Scan zip file" />
+                android:text="扫描压缩文件" />
 
             <FrameLayout
                 android:layout_width="match_parent"

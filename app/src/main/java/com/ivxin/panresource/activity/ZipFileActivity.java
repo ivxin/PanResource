@@ -24,11 +24,14 @@ import androidx.core.content.ContextCompat;
 import com.ivxin.panresource.R;
 import com.ivxin.panresource.base.BaseActivity;
 import com.ivxin.panresource.base.Constant;
+import com.ivxin.panresource.base.OnActivityResultListener;
 import com.ivxin.panresource.databinding.ActivityZipFileBinding;
+import com.ivxin.panresource.utils.FileUtils;
 import com.ivxin.panresource.utils.ScanFileUtil;
 import com.ivxin.panresource.utils.Utils;
 import com.ivxin.panresource.view.FileInfoItemView;
 import com.ivxin.panresource.view.MyAdapter;
+import com.qmuiteam.qmui.util.QMUIKeyboardHelper;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +40,10 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 public class ZipFileActivity extends BaseActivity {
     private ActivityZipFileBinding binding;
@@ -51,7 +57,6 @@ public class ZipFileActivity extends BaseActivity {
         setContentView(binding.getRoot());
         arrayAdapter = new MyAdapter<>(this, list, FileInfoItemView.class, File.class);
         binding.lv7zFile.setAdapter(arrayAdapter);
-        requestPermission();
         binding.lv7zFile.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -60,7 +65,7 @@ public class ZipFileActivity extends BaseActivity {
         });
         Constant.zipFilePassword = sp.getString(Constant.SP_KEY_PASSWORD, "123");
         Constant.isOnly7z = sp.getBoolean(Constant.SP_KEY_ONLY7Z, false);
-        binding.tvDefaultPassword.setText(String.format("password:%s", Constant.zipFilePassword));
+        binding.tvDefaultPassword.setText(String.format("设置解压密码:%s", Constant.zipFilePassword));
         binding.cbOnly7z.setChecked(Constant.isOnly7z);
         binding.cbOnly7z.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -69,6 +74,14 @@ public class ZipFileActivity extends BaseActivity {
                 sp.edit().putBoolean(Constant.SP_KEY_ONLY7Z, isChecked).apply();
             }
         });
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        HashSet<String> outPutPathSet = (HashSet<String>) sp.getStringSet(Constant.SP_KEY_OUTPUT_PATH_SET, new HashSet<>());
+        binding.tvClearFolder.setText(String.format(Locale.CHINA, "清理解压出的文件(%s)", outPutPathSet.size()));
     }
 
     private void unZipFile(final String zipFilePath) {
@@ -77,7 +90,7 @@ public class ZipFileActivity extends BaseActivity {
             toast("文件不存在");
             return;
         }
-        showLoadingDialog("unzipping...");
+        showLoadingDialog("解压缩中...");
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -90,16 +103,19 @@ public class ZipFileActivity extends BaseActivity {
                         public void run() {
                             switch (exitCode) {
                                 case 0:
-                                    toast("unzip to " + outPutPath);
+                                    toast("已解压到：\n" + outPutPath);
+                                    HashSet<String> outPutPathSet = (HashSet<String>) sp.getStringSet(Constant.SP_KEY_OUTPUT_PATH_SET, new HashSet<>());
+                                    outPutPathSet.add(outPutPath);
+                                    sp.edit().putStringSet(Constant.SP_KEY_OUTPUT_PATH_SET, outPutPathSet).apply();
                                     Intent intent = new Intent(ZipFileActivity.this, FolderExploreActivity.class);
                                     intent.putExtra(FolderExploreActivity.KEY_PATH, outPutPath);
                                     gotoOther(intent);
                                     break;
                                 case 2:
-                                    toast("wrong password");
+                                    toast("解压缩异常,可能密码错误,也可能解压完成,直接检查目录");
                                     break;
                                 default:
-                                    toast("unzip fail");
+                                    toast("解压缩失败");
                                     break;
                             }
 
@@ -115,59 +131,12 @@ public class ZipFileActivity extends BaseActivity {
         thread.start();
     }
 
-
-    private void requestPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // 先判断有没有权限
-            if (Environment.isExternalStorageManager()) {
-                scanFile();
-            } else {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                intent.setData(Uri.parse("package:" + getPackageName()));
-                startActivityForResult(intent, 1);
-            }
-        } else {
-            // 先判断有没有权限
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                scanFile();
-            } else {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 1) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                scanFile();
-            } else {
-                toast("存储权限获取失败");
-            }
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (Environment.isExternalStorageManager()) {
-                scanFile();
-            } else {
-                toast("存储权限获取失败");
-            }
-        }
-    }
-
     private void scanFile() {
         ScanFileUtil.ScanFileListener scanFileListener = new ScanFileUtil.ScanFileListener() {
             @Override
             public void scanBegin() {
                 list.clear();
-                showLoadingDialog("scanning...");
+                showLoadingDialog("扫描中...");
             }
 
             @Override
@@ -185,7 +154,7 @@ public class ZipFileActivity extends BaseActivity {
                         });
                         arrayAdapter.notifyDataSetChanged();
                         hideLoadingDialog();
-                        toast("scan finished. cost " + timeConsuming * 1.0 / 1000 + "s");
+                        toast("扫描结束 耗时: " + timeConsuming * 1.0 / 1000 + "秒");
                     }
                 });
             }
@@ -195,25 +164,28 @@ public class ZipFileActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        if (!file.getName().toLowerCase().endsWith(".7z")) {
+                            return;
+                        }
                         list.add(file);
                         arrayAdapter.notifyDataSetChanged();
                     }
                 });
             }
         };
-        ScanFileUtil scanFileUtil = new ScanFileUtil(ScanFileUtil.Companion.getExternalStorageDirectory(), scanFileListener);
+        ScanFileUtil scanFileUtil = new ScanFileUtil(Environment.getExternalStorageDirectory().getAbsolutePath(), scanFileListener);
         ScanFileUtil.FileFilterBuilder fileFilter = new ScanFileUtil.FileFilterBuilder();
         fileFilter.notScanHiddenFiles();
         fileFilter.onlyScanFile();
         fileFilter.scanZipFiles();
-//        if (Constant.isOnly7z) {
+        if (Constant.isOnly7z) {
             fileFilter.addCustomFilter(new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
                     return name.endsWith(".7z");
                 }
             });
-//        }
+        }
         scanFileUtil.setCallBackFilter(fileFilter.build());
         scanFileUtil.startAsyncScan();
     }
@@ -233,15 +205,50 @@ public class ZipFileActivity extends BaseActivity {
                 Constant.zipFilePassword = editText.getText().toString();
                 sp.edit().putString(Constant.SP_KEY_PASSWORD, Constant.zipFilePassword).apply();
             }
-        }).create();
+        }).setTitle("设置解压密码").create();
         dialog.show();
         editText.requestFocus();
         editText.setSelection(Constant.zipFilePassword.length());
         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                binding.tvDefaultPassword.setText(String.format("password:%s", Constant.zipFilePassword));
+                binding.tvDefaultPassword.setText(String.format("设置解压密码:%s", Constant.zipFilePassword));
             }
         });
+        QMUIKeyboardHelper.showKeyboard(editText, true);
+    }
+
+    public void exploreFolder(View view) {
+        File baiduFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "BaiduNetdisk");
+        String folder = baiduFolder.exists() ? baiduFolder.getAbsolutePath() : Environment.getExternalStorageDirectory().getAbsolutePath();
+        Intent intent = new Intent(this, FolderExploreActivity.class);
+        intent.putExtra(FolderExploreActivity.KEY_PATH, folder);
+        gotoOther(intent);
+    }
+
+    public void clearUnzippedFiles(View view) {
+        showLoadingDialog("正在清理");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HashSet<String> outPutPathSet = (HashSet<String>) sp.getStringSet(Constant.SP_KEY_OUTPUT_PATH_SET, new HashSet<>());
+                int outPutPathCount = outPutPathSet.size();
+                int deleteCount = 0;
+                for (String outPutPath : outPutPathSet) {
+                    deleteCount += FileUtils.deleteDir(outPutPath) ? 1 : 0;
+                }
+                outPutPathSet.clear();
+                sp.edit().putStringSet(Constant.SP_KEY_OUTPUT_PATH_SET, outPutPathSet).apply();
+                int finalDeleteCount = deleteCount;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        hideLoadingDialog();
+                        toast(String.format(Locale.CHINA, "已清理解压的文件:%s/%s", finalDeleteCount, outPutPathCount));
+                        binding.tvClearFolder.setText(String.format(Locale.CHINA, "清理解压出的文件(%s)", outPutPathSet.size()));
+                    }
+                });
+            }
+        }).start();
     }
 }
