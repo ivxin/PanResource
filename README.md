@@ -7,9 +7,9 @@
 2.![Video_20210521_023302_46](https://user-images.githubusercontent.com/17776331/119093590-78aacf00-ba42-11eb-9289-abc7acde9b87.gif)
 
 ## 下载地址
-https://down.iroha.fans/f/24486174-496695924-c51878
-（访问密码：5368）
-
+panresource_v2204221135.apk: 
+http://ctfile.iroha.fans/f/24486174-572752385-af0914
+（访问密码：0）
 
 #### 欢迎关注公众号
 
