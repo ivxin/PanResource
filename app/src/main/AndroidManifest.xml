@@ -39,6 +39,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeNoActionBar"
         android:usesCleartextTraffic="true">
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.ivxin.panresource.FileProvider"
@@ -50,9 +51,10 @@
         </provider>
         <provider
             android:name="cn.bmob.v3.util.BmobContentProvider"
-            android:authorities="com.ivxin.panresource.BmobContentProvider"/>
+            android:authorities="com.ivxin.panresource.BmobContentProvider" />
 
         <activity
+            android:exported="true"
             android:name=".activity.MainActivity"
             android:theme="@style/AppTheme">
             <intent-filter>
@@ -76,10 +78,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.ZipFileActivity" />
-        <activity android:name=".activity.FolderExploreActivity" />
+        <activity
+            android:name=".activity.FolderExploreActivity"
+            android:launchMode="singleTop" />
+        <activity android:name=".activity.TextReaderActivity" />
         <activity
             android:name="cn.bmob.v3.update.UpdateDialogActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     </application>
 
 

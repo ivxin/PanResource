@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="actionMenuTextAppearance">@style/MenuTextStyle</item>
     </style>
 
     <style name="AppThemeNoActionBar" parent="QMUI.Compat.NoActionBar">
@@ -13,6 +14,11 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="actionMenuTextAppearance">@style/MenuTextStyle</item>
     </style>
 
+    <style name="MenuTextStyle">
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textSize">14sp</item>
+    </style>
 </resources>

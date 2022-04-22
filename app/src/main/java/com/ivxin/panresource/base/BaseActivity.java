@@ -2,6 +2,7 @@ package com.ivxin.panresource.base;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -9,10 +10,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
+import android.os.Handler;
 import android.provider.Settings;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +23,12 @@ import androidx.core.content.ContextCompat;
 
 import com.ivxin.panresource.utils.ToastUtil;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import us.feras.mdv.MarkdownView;
+
 public class BaseActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_PERMISSION_ANY = 0;
     public static final int REQUEST_CODE_PERMISSION_FILE_ACCESS = 1;
@@ -29,11 +36,78 @@ public class BaseActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_ACTIVITY_ANY = 3;
     public SharedPreferences sp;
     private OnActivityResultListener onActivityResultListener;
+    private static final ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
+    private static final Handler handler = new Handler();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         sp = getSharedPreferences(Constant.SP_FILE, MODE_PRIVATE);
         super.onCreate(savedInstanceState);
+    }
+
+    public void runOnThread(Runnable runnable) {
+        cachedThreadPool.execute(runnable);
+    }
+
+    public <T> Future<T> submitThread(Runnable runnable, T result) {
+        return cachedThreadPool.submit(runnable, result);
+    }
+
+    public void runOnUiThreadDelay(Runnable runnable, long delay) {
+        handler.postDelayed(runnable, delay);
+    }
+
+
+    public void showTipDialog(String content) {
+        FrameLayout layout = new FrameLayout(this);
+        int padding = 50;
+        layout.setPadding(padding, padding, padding, padding);
+        MarkdownView markdownView = new MarkdownView(this);
+        markdownView.setPadding(50, 30, 30, 50);
+        markdownView.loadMarkdown(content);
+
+
+//        final QMUILinkTextView textView = new QMUILinkTextView(this);
+//        textView.setPadding(50, 30, 30, 50);
+//        textView.setBackgroundResource(R.drawable.bg_content_box);
+//        textView.setOnLinkClickListener(new QMUILinkTextView.OnLinkClickListener() {
+//            @Override
+//            public void onTelLinkClick(String phoneNumber) {
+//                Intent intent = new Intent(Intent.ACTION_CALL);
+//                intent.setData(Uri.parse("tel:" + phoneNumber));
+//                startActivity(intent);
+//            }
+//
+//            @Override
+//            public void onMailLinkClick(String mailAddress) {
+//                Intent intent = new Intent(Intent.ACTION_SEND);
+//                String[] receiver;
+//                receiver = new String[]{mailAddress};
+//                intent.putExtra(Intent.EXTRA_EMAIL, receiver);
+//                intent.putExtra("subject", "About " + getString(R.string.app_name));
+//                intent.putExtra(Intent.EXTRA_TEXT, "/*Thanks advance for any tips.*/");
+//                intent.setType("text/plain");
+//                startActivity(Intent.createChooser(intent, "Choose Email Client")); //调用系统的mail客户端进行发送
+//            }
+//
+//            @Override
+//            public void onWebUrlLinkClick(String url) {
+//                Utils.openUrlWithOtherApp(BaseActivity.this, url, false);
+//            }
+//        });
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            textView.setText(Html.fromHtml(content, 0));
+//        }else{
+//            textView.setText(Html.fromHtml(content));
+//        }
+        layout.addView(markdownView);
+        final AlertDialog dialog = new AlertDialog.Builder(this).setView(layout).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }).create();
+        dialog.show();
     }
 
     private OnPermissionCheckedListener onPermissionCheckedListener;
@@ -139,8 +213,7 @@ public class BaseActivity extends AppCompatActivity {
             if (Environment.isExternalStorageManager()) {
                 this.onFileAccessGrantedListener.onFileAccessGranted();
                 this.onFileAccessGrantedListener = null;
-            }
-            else {
+            } else {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
                 intent.setData(Uri.parse("package:" + getPackageName()));
                 startActivityForResult(intent, REQUEST_CODE_ACTIVITY_FILE_ACCESS);
@@ -184,7 +257,10 @@ public class BaseActivity extends AppCompatActivity {
     private AlertDialog loadingDialog;
 
     public void showLoadingDialog(String title) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this).setCancelable(false).setTitle(title).setView(new ProgressBar(this));
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setTitle(title)
+                .setView(new ProgressBar(this));
         loadingDialog = builder.create();
         loadingDialog.show();
     }

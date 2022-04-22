@@ -3,6 +3,7 @@ package com.ivxin.panresource.view;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Checkable;
 
 import com.bumptech.glide.Glide;
 import com.ivxin.panresource.R;
@@ -12,7 +13,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-public class FileInfoItemView extends MyAdapterItemLayout<File> {
+public class FileInfoItemView extends MyAdapterItemLayout<File> implements Checkable {
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
     private final LayoutFileListItemBinding binding;
 
@@ -33,14 +34,14 @@ public class FileInfoItemView extends MyAdapterItemLayout<File> {
             binding.ivFileIcon.setImageResource(R.drawable.ic_folder_24);
         } else if (bean.isFile()) {
             binding.ivFileIcon.setImageResource(R.drawable.ic_file_24);
-            String[] imageExtents = new String[]{".jpg", ".jpeg", ".png", ".webp", ".bmp"};
+            String[] imageExtents = getResources().getStringArray(R.array.image_extends);
             for (String ext : imageExtents) {
                 if (bean.getPath().toLowerCase().endsWith(ext)) {
                     Glide.with(this).load(bean.getPath()).error(R.drawable.ic_file_24).into(binding.ivFileIcon);
                     break;
                 }
             }
-            String[] zipExtents = new String[]{".zip", ".rar", ".7z", ".tar", ".cab"};
+            String[] zipExtents = getResources().getStringArray(R.array.zip_extends);
             for (String zipExtent : zipExtents) {
                 if (bean.getPath().toLowerCase().endsWith(zipExtent)) {
                     binding.ivFileIcon.setImageResource(R.mipmap.compressed);
@@ -54,5 +55,20 @@ public class FileInfoItemView extends MyAdapterItemLayout<File> {
         binding.tvFileName.setText(bean.getName());
         binding.tvFilePath.setText(bean.getParent());
         binding.tvFileCreateDate.setText(simpleDateFormat.format(bean.lastModified()));
+    }
+
+    @Override
+    public void setChecked(boolean checked) {
+
+    }
+
+    @Override
+    public boolean isChecked() {
+        return false;
+    }
+
+    @Override
+    public void toggle() {
+
     }
 }

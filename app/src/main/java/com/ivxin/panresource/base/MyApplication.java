@@ -3,13 +3,10 @@ package com.ivxin.panresource.base;
 import android.app.Application;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.util.Log;
 
 import com.ivxin.panresource.utils.CrashHandler;
-import com.qmuiteam.qmui.QMUIConfig;
 
 import cn.bmob.v3.Bmob;
-import cn.bmob.v3.update.BmobUpdateAgent;
 
 public class MyApplication extends Application {
     @Override
@@ -25,7 +22,7 @@ public class MyApplication extends Application {
             PackageManager pm = getPackageManager();
             PackageInfo pi = pm.getPackageInfo(getPackageName(), PackageManager.GET_ACTIVITIES);
             if (pi != null) {
-                Constant.verisonName = pi.versionName == null ? "null" : pi.versionName;
+                Constant.versionName = pi.versionName == null ? "null" : pi.versionName;
                 Constant.version = pi.versionCode;
 
             }

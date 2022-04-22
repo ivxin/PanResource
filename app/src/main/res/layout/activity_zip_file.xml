@@ -23,7 +23,8 @@
             android:background="@drawable/bg_content_box"
             android:onClick="exploreFolder"
             android:padding="10dp"
-            android:text="文件浏览" />
+            android:text="文件浏览"
+            android:textColor="@color/colorPrimary" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -32,7 +33,8 @@
             android:background="@drawable/bg_content_box"
             android:onClick="reScanZipFile"
             android:padding="10dp"
-            android:text="扫描压缩文件" />
+            android:text="扫描压缩文件"
+            android:textColor="@color/colorPrimary" />
 
         <CheckBox
             android:id="@+id/cb_only_7z"
@@ -41,7 +43,8 @@
             android:background="@drawable/bg_content_box"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:text="只看.7z文件 " />
+            android:text="只看.7z文件 "
+            android:textColor="@color/colorPrimary" />
 
         <TextView
             android:id="@+id/tv_default_password"
@@ -51,7 +54,8 @@
             android:background="@drawable/bg_content_box"
             android:onClick="changeDefaultPassword"
             android:padding="10dp"
-            android:text="设置解压密码:123" />
+            android:text="设置解压密码:123"
+            android:textColor="@color/colorPrimary" />
 
         <TextView
             android:id="@+id/tv_clear_folder"
@@ -61,7 +65,8 @@
             android:background="@drawable/bg_content_box"
             android:onClick="clearUnzippedFiles"
             android:padding="10dp"
-            android:text="清理解压出的文件" />
+            android:text="清理解压出的文件"
+            android:textColor="@color/colorPrimary" />
 
     </com.qmuiteam.qmui.widget.QMUIFloatLayout>
 
@@ -70,7 +75,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:text="点击文件自动解压到相同目录下并打开" />
+        android:text="点击文件自动解压到相同目录下并打开"
+        android:textColor="@color/colorPrimary" />
 
     <ListView
         android:id="@+id/lv_7z_file"

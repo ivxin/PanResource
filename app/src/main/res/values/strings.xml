@@ -6,45 +6,113 @@
     <string name="nothing_found">什么都没找到</string>
 
     <string name="tip" formatted="false"><![CDATA[
-        使用方法有三种：<br>
-        1.公众号文章右上角——>在浏览器打开——>选择本工具<br>
-        2.公众号文章右上角——>复制链接——>选择本工具<br>
-        3.公众号文章内复制含有分享码的文本——>选择本工具<br>
+        <font size=1>使用方法有三种：<br>
+        * 公众号文章右上角——>在浏览器打开——>选择本工具<br>
+        * 公众号文章右上角——>复制链接——>选择本工具<br>
+        * 公众号文章内复制含有分享码的文本——>选择本工具<br>
           正常情况就可以得到粗体的分享码了，可以打开对应的app,或者在浏览器里面打开链接<br>
+        * 下载完的压缩文件,可以回到本app内直接解压预览图片,
+          还有点击对应类型的文件可以直接打开相关程序进行操作</font>
 ]]></string>
     <string name="about" formatted="false"><![CDATA[
+<font size=3>关于%s</font><br>
 
-<h1>关于%s</h1>
+<font size=2>版本v%s</font><br>
 
-<font size=1><b>版本v%s</b></font><br><br>
+<font size=1>
+<br> 使用第三方组件:<br>
 
-<font size=1><b>使用第三方组件:</b></font><br>
+`org.jsoup:jsoup:1.11.3`
 
-<font size=1>org.jsoup:jsoup:1.11.3</font><br>
+`com.qmuiteam:qmui:2.0.0-alpha10`
 
-<font size=1>com.qianwen:update-app:3.5.2</font><br>
+`com.hzy:libp7zip:1.7.0`
 
-<font size=1>com.daimajia.numberprogressbar:library:1.4@aar</font><br>
+`com.susion:image-viewer:1.0.2`
 
-<font size=1>com.qmuiteam:qmui:2.0.0-alpha10</font><br>
+`com.github.bumptech.glide:glide:4.12.0`
 
-<font size=1>com.hzy:libp7zip:1.7.0</font><br>
+`com.zhy:percent-support-extends:1.1.1`
 
-<font size=1>com.susion:image-viewer:1.0.2</font><br>
+`com.github.mukeshsolanki:MarkdownView-Android:1.1.1`
 
-<font size=1>com.github.bumptech.glide:glide:4.9.0</font><br>
+<br> 使用第三方服务:<br>
 
-<font size=1>com.zhy:percent-support-extends:1.1.1</font><br>
+`io.github.bmob:android-sdk:3.8.4`
 
-<font size=1><b>使用第三方服务:</b></font><br>
-
-<font size=1>io.github.bmob:android-sdk:3.8.4</font><br>
-
-<font size=1><b>Github项目地址:</b></font><br>
-
-<font size=1><a href="https://https://github.com/ivxin/PanResource">https://github.com/ivxin/PanResource</a></font><br>
-
-
+<br> Github项目地址:<br>
+[github.com/ivxin/PanResource](https://github.com/ivxin/PanResource)
+</font>
 ]]>
     </string>
+
+    <string name="content_template"><![CDATA[
+    <font size=2>
+    <table>
+    <tr><td>名称</td><td>%s</td></tr>
+    <tr><td>类型</td><td>%s</td></tr>
+    <tr><td>路径</td><td>%s</td></tr>
+    <tr><td>可读</td><td>%s</td></tr>
+    <tr><td>可写</td><td>%s</td></tr>
+    <tr><td>可执行</td><td>%s</td></tr>
+    <tr><td>HASH</td><td>%s</td></tr>
+    <tr><td>大小</td><td>%s</td></tr>
+    <tr><td>时间</td><td>%s</td></tr>
+    </table>
+    </font>
+]]></string>
+
+    <string-array name="image_extends">
+        <item>.jpg</item>
+        <item>.jpeg</item>
+        <item>.png</item>
+        <item>.webp</item>
+        <item>.bmp</item>
+        <item>.heic</item>
+        <item>.gif</item>
+        <item>.ico</item>
+        <item>.tif</item>
+        <item>.tiff</item>
+        <item>.tga</item>
+        <item>.psd</item>
+        <item>.jpe</item>
+    </string-array>
+
+    <string-array name="zip_extends">
+        <item>.zip</item>
+        <item>.rar</item>
+        <item>.7z</item>
+        <item>.tar</item>
+        <item>.cab</item>
+        <item>.gz</item>
+        <item>.tgz</item>
+        <item>.bz</item>
+        <item>.lz</item>
+        <item>.jar</item>
+        <item>.war</item>
+        <item>.iso</item>
+        <item>.img</item>
+    </string-array>
+
+    <string-array name="text_extends">
+        <item>.txt</item>
+        <item>.md</item>
+        <item>.log</item>
+        <item>.ini</item>
+        <item>.properties</item>
+        <item>.pro</item>
+        <item>.java</item>
+        <item>.js</item>
+        <item>.cpp</item>
+        <item>.css</item>
+        <item>.html</item>
+        <item>.gradle</item>
+        <item>.xml</item>
+        <item>.json</item>
+        <item>.bat</item>
+        <item>.yaml</item>
+        <item>.yam</item>
+        <item>.iml</item>
+        <item>.gitignore</item>
+    </string-array>
 </resources>

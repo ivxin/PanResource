@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.net.URL;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -40,7 +41,7 @@ import javax.net.ssl.HttpsURLConnection;
 public final class FileUtils {
 
     private static final String LINE_SEP = System.getProperty("line.separator");
-    private static final String FILE_PROVIDER_AUTH = "com.ivxin.panresource.fileProvider";
+    private static final String FILE_PROVIDER_AUTH = "com.ivxin.panresource.FileProvider";
 
     private FileUtils() {
         throw new UnsupportedOperationException("u can't instantiate me...");
@@ -1088,6 +1089,41 @@ public final class FileUtils {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    public static String getFileSha1(File file) {
+        FileInputStream in = null;
+        try {
+            in = new FileInputStream(file);
+            MessageDigest digest = MessageDigest.getInstance("SHA-1");
+            byte[] buffer = new byte[1024 * 1024 * 10];
+
+            int len = 0;
+            while ((len = in.read(buffer)) > 0) {
+                digest.update(buffer, 0, len);
+            }
+            String sha1 = new BigInteger(1, digest.digest()).toString(16);
+            int length = 40 - sha1.length();
+            if (length > 0) {
+                for (int i = 0; i < length; i++) {
+                    sha1 = "0" + sha1;
+                }
+            }
+            return sha1;
+        } catch (IOException e) {
+            System.out.println(e);
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println(e);
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException e) {
+                System.out.println(e);
             }
         }
         return null;

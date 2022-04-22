@@ -20,7 +20,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="剪贴板文字 或 来自其他App的链接"
+                android:text="当前正则表达式"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="14sp" />
 
@@ -31,7 +31,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/tv_text_in_clipboard"
+                    android:id="@+id/tv_code_rex"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
@@ -39,15 +39,15 @@
                     android:textSize="12sp" />
 
                 <TextView
-                    android:id="@+id/tv_clear_clipboard"
+                    android:id="@+id/tv_edit_rex"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|bottom"
                     android:background="@drawable/bg_btn_item_choose"
-                    android:onClick="clearClipboard"
+                    android:onClick="showRexEditDialog"
                     android:paddingStart="5dp"
                     android:paddingEnd="5dp"
-                    android:text="清空剪贴板"
+                    android:text="编辑正则表达式"
                     android:textColor="@android:color/white" />
             </FrameLayout>
 
@@ -132,6 +132,7 @@
                     android:onClick="openBrowser"
                     android:paddingTop="20dp"
                     android:paddingBottom="20dp"
+                    android:visibility="gone"
                     app:layout_widthPercent="45%">
 
                     <TextView
@@ -147,6 +148,7 @@
                 <View
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:visibility="gone"
                     app:layout_widthPercent="10%" />
 
                 <FrameLayout
@@ -156,7 +158,7 @@
                     android:background="@drawable/bg_content_box"
                     android:gravity="center"
                     android:onClick="openApp"
-                    app:layout_widthPercent="45%">
+                    app:layout_widthPercent="100%">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -164,7 +166,7 @@
                         android:layout_gravity="center"
                         android:layout_margin="20dp"
                         android:gravity="center"
-                        android:text="复制分享文本\n然后打开App👇"
+                        android:text="复制分享文本\n然后打开App→_→"
                         android:textColor="@color/colorPrimary"
                         android:textSize="14sp" />
 
@@ -200,7 +202,8 @@
                 android:background="@drawable/bg_content_box"
                 android:gravity="center"
                 android:onClick="find7zFile"
-                android:text="扫描压缩文件" />
+                android:text="扫描压缩文件(解压缩7z)"
+                android:textColor="@color/colorPrimary" />
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -208,6 +211,4 @@
 
         </LinearLayout>
     </ScrollView>
-
-
 </FrameLayout>

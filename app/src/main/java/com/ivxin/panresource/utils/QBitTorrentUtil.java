@@ -3,6 +3,11 @@ package com.ivxin.panresource.utils;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.gson.reflect.TypeToken;
+import com.ivxin.panresource.base.BaseActivity;
+import com.ivxin.panresource.base.Constant;
+import com.ivxin.panresource.eneity.DownloadConfigVO;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,13 +19,22 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class BitTorrentUtil {
-    public static String serverUrl = "http://127.0.0.1:6800";
-    public static String username = "admin";
-    public static String password = "password";
-    public static String cookie = "";//
+public class QBitTorrentUtil {
+    public final String serverUrl;
+    public final String username;
+    public final String password;
+    public String cookie = "";//
 
-    public static String qBitTorrentLogin() {
+    public QBitTorrentUtil(BaseActivity activity) {
+        String config = activity.sp.getString(Constant.SP_KEY_DOWNLOAD_SERVER_CONFIG, "");
+        DownloadConfigVO downloadConfigVO = Constant.GSON.fromJson(config, new TypeToken<DownloadConfigVO>() {
+        }.getType());
+        serverUrl = downloadConfigVO.getQbtServer();
+        username = downloadConfigVO.getQbtUser();
+        password = downloadConfigVO.getQbtPass();
+    }
+
+    public void qBitTorrentLogin() {
         String loginUrl = serverUrl + "/api/v2/auth/login";
         String params = String.format("username=%s&password=%s", username, password);
         try {
@@ -56,10 +70,12 @@ public class BitTorrentUtil {
             e.printStackTrace();
         }
         Log.d("qBitTorrentLogin", "cookie:" + cookie);
-        return cookie;
     }
 
-    public static String postTorrentFile(File torrentFile) {
+    public String postTorrentFile(File torrentFile) {
+        if (TextUtils.isEmpty(serverUrl)) {
+            return "请先配置服务器";
+        }
         if (TextUtils.isEmpty(cookie)) {
             qBitTorrentLogin();
         }

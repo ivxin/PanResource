@@ -42,7 +42,12 @@ import java.util.Locale;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.BmobDialogButtonListener;
+import cn.bmob.v3.listener.BmobUpdateListener;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.update.BmobUpdateAgent;
+import cn.bmob.v3.update.UpdateResponse;
+import cn.bmob.v3.update.UpdateStatus;
 
 public class UpdateManager {
     private BaseActivity activity;
@@ -53,24 +58,77 @@ public class UpdateManager {
     }
 
     public void checkUpdate() {
-        BmobQuery<ApkFile> bmobQuery = new BmobQuery<>();
-        bmobQuery.setLimit(8).order("-createdAt").findObjects(new FindListener<ApkFile>() {
+        BmobUpdateAgent.setUpdateOnlyWifi(false);
+        BmobUpdateAgent.setUpdateListener(new BmobUpdateListener() {
+            /**
+             * UpdateStatus.TimeOut    =-1：查询出错或超时
+             * UpdateStatus.Yes        = 0：有更新
+             * UpdateStatus.No         = 1：没有更新
+             * UpdateStatus.IGNORED    = 3：该版本已被忽略更新
+             * UpdateStatus.EmptyField = 2：字段值为空，请检查以下内容：
+             *                             1)、是否已填写target_size目标apk大小（以字节为单位）；
+             *                             2)、path或者android_url两者是否必填其中一项（若两者都填写，则默认下载path字段下的apk文件）
+             * UpdateStatus.ErrorSizeFormat = 4：请检查target_size填写的格式，请使用file.length()方法获取apk大小
+             * UpdateStatus.Update     =6： 代表点击的是“立即更新”
+             * UpdateStatus.NotNow     =7： 代表点击的是“以后再说”
+             * UpdateStatus.Close      =8： 代表关闭对话框-->只有在强制更新状态下才会在更新对话框的右上方出现close按钮,
+             *                              如果用户不点击”立即更新“按钮，这时候开发者可做些操作，比如直接退出应用等
+             * @param updateStatus
+             * @param updateInfo
+             */
             @Override
-            public void done(List<ApkFile> list, BmobException e) {
-                if (e == null) {
-                    if (list.size() > 0) {
-                        ApkFile apkFile = list.get(0);
-                        if (apkFile.getVersion_i() > Constant.version) {
-                            showUpdateDialog(apkFile);
-                        } else {
-                            activity.toast("没有新版本");
-                        }
-                    }
-                } else {
-                    Utils.printLog(true, "BmobException", e.toString());
+            public void onUpdateReturned(int updateStatus, UpdateResponse updateInfo) {
+                // TODO Auto-generated method stub
+                if (updateStatus == UpdateStatus.Yes) {//版本有更新
+
+                } else if (updateStatus == UpdateStatus.No) {
+                    activity.toast("版本无更新");
+                } else if (updateStatus == UpdateStatus.EmptyField) {//此提示只是提醒开发者关注那些必填项，测试成功后，无需对用户提示
+                    activity.toast("请检查你AppVersion表的必填项，1、target_size（文件大小）是否填写；2、path或者android_url两者必填其中一项。");
+                } else if (updateStatus == UpdateStatus.IGNORED) {
+                    activity.toast("该版本已被忽略更新");
+                } else if (updateStatus == UpdateStatus.ErrorSizeFormat) {
+                    activity.toast("请检查target_size填写的格式，请使用file.length()方法获取apk大小。");
+                } else if (updateStatus == UpdateStatus.TimeOut) {
+                    activity.toast("查询出错或查询超时");
                 }
             }
         });
+        BmobUpdateAgent.setDialogListener(new BmobDialogButtonListener() {
+            @Override
+            public void onClick(int status) {
+                switch (status) {
+                    case UpdateStatus.Update:
+                        activity.toast("点击了立即更新按钮");
+                        break;
+                    case UpdateStatus.NotNow:
+                        activity.toast("点击了以后再说按钮");
+                        break;
+                    case UpdateStatus.Close://只有在强制更新状态下才会在更新对话框的右上方出现close按钮,如果用户不点击”立即更新“按钮，这时候开发者可做些操作，比如直接退出应用等
+                        activity.toast("点击了对话框关闭按钮");
+                        break;
+                }
+            }
+        });
+        BmobUpdateAgent.update(activity);
+//        BmobQuery<ApkFile> bmobQuery = new BmobQuery<>();
+//        bmobQuery.setLimit(8).order("-createdAt").findObjects(new FindListener<ApkFile>() {
+//            @Override
+//            public void done(List<ApkFile> list, BmobException e) {
+//                if (e == null) {
+//                    if (list.size() > 0) {
+//                        ApkFile apkFile = list.get(0);
+//                        if (apkFile.getVersion_i() > Constant.version) {
+//                            showUpdateDialog(apkFile);
+//                        } else {
+//                            activity.toast("没有新版本");
+//                        }
+//                    }
+//                } else {
+//                    Utils.printLog(true, "BmobException", e.toString());
+//                }
+//            }
+//        });
     }
 
     private void showUpdateDialog(ApkFile apkFile) {
